@@ -63,20 +63,6 @@ def imageRekogniser(imageurl):
 		print 0.5
 
 
-
-
-
-
-
-	# lowercaseString = currentEmotion.lower()
-
-	# for i in ageRange:
-	# 	# therange = json.dumps(i, indent=2)
-	# 	# high = i.get("High")
-	# 	print i
-
-	# print ageRange
-
 if __name__ == '__main__':
 
 	methodname = sys.argv[1]
