@@ -1,24 +1,3 @@
-# import boto3
-
-# BUCKET = "amazon-rekognition"
-
-# def detect_labels(bucket, key, max_labels=10, min_confidence=90, region="us-west-2"):
-# 	rekognition = boto3.client("rekognition", region)
-# 	response = rekognition.detect_labels(
-# 		Image={
-# 			"S3Object": {
-# 				"Bucket": bucket,
-# 				"Name": key,
-# 			}
-# 		},
-# 		MaxLabels=max_labels,
-# 		MinConfidence=min_confidence,
-# 	)
-# 	return response['Labels']
-
-
-# for label in detect_labels(BUCKET, KEY):
-# 	print "{Name} - {Confidence}%".format(**label)
 
 
 import boto3  
@@ -27,33 +6,46 @@ import os, sys
 import image
 from PIL import Image
 
-f = open("elephant-in-the-room.jpg")
-rek = boto3.client('rekognition') # Setup the Rekognition Client  
 
-print "Getting Image"  
-readfile = f.read()# Read the image
 
-print "Image retrieved"  
-print "Sending to Rekognition"
+def imageRekogniser(imageurl):
 
-# Detect the items in the image
-results = rek.detect_labels(  
-    Image={
-        'Bytes': readfile
-    }
-)
+	f = open("{}".format(imageurl))
+	rek = boto3.client('rekognition') # Setup the Rekognition Client  
+	readfile = f.read()# Read the image
+	results2 = rek.detect_faces(  
 
-print "Rekognition done"
+	    Image={
+	        'Bytes': readfile
+	    },
+	    Attributes=[
+	    'ALL',
+	]
+	)
 
-# Print the result
-print json.dumps(  
-    results['Labels'],
-    indent=2
-)
+	jsonData = json.dumps(results2['FaceDetails'][0], indent=2)
+	newData = json.loads(jsonData)
+	emotions = newData["Emotions"]
 
-# Print a message for each item
-for label in results["Labels"]:  
-    print "I am {}% confident of of the image having a {} in it".format(
-        int(label['Confidence']),
-        label['Name'],
-    )
+
+	emotionArray = []
+
+	for i in emotions:
+		# eachemotion = json.dumps(i, indent=2)
+		mood = i.get("Type")
+		emotionArray.append(mood)
+
+	currentEmotion = emotionArray[0]
+	lowercaseString = currentEmotion.lower()
+
+	print newData
+
+
+
+
+if __name__ == '__main__':
+	methodname = sys.argv[1]
+	imageRekogniser(methodname)
+
+
+
