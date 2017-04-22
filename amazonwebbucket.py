@@ -1,14 +1,59 @@
-import line to: from /usr/local/lib/python2.7/dist-packages/watson_developer_cloud
-import VisualRecognitionV3 as VisualRecognition
+# import boto3
+
+# BUCKET = "amazon-rekognition"
+
+# def detect_labels(bucket, key, max_labels=10, min_confidence=90, region="us-west-2"):
+# 	rekognition = boto3.client("rekognition", region)
+# 	response = rekognition.detect_labels(
+# 		Image={
+# 			"S3Object": {
+# 				"Bucket": bucket,
+# 				"Name": key,
+# 			}
+# 		},
+# 		MaxLabels=max_labels,
+# 		MinConfidence=min_confidence,
+# 	)
+# 	return response['Labels']
+
+
+# for label in detect_labels(BUCKET, KEY):
+# 	print "{Name} - {Confidence}%".format(**label)
+
+
+import boto3  
 import json
-from os.path import join, dirname
-from os import environ
-from watson_developer_cloud import VisualRecognitionV3
+import os, sys
+import image
+from PIL import Image
 
-visual_recognition = VisualRecognitionV3('2016-05-20', api_key='{6ca7f05707251912ffb02b7f89f974eb66a004fd}')
+f = open("elephant-in-the-room.jpg")
+rek = boto3.client('rekognition') # Setup the Rekognition Client  
 
-print(json.dumps(visual_recognition.classify(images_url=https://www.ibm.com/ibm/ginni/images/ginni_bio_780x981_v4_03162016.jpg), indent=2))
+print "Getting Image"  
+readfile = f.read()# Read the image
 
+print "Image retrieved"  
+print "Sending to Rekognition"
 
+# Detect the items in the image
+results = rek.detect_labels(  
+    Image={
+        'Bytes': readfile
+    }
+)
 
+print "Rekognition done"
 
+# Print the result
+print json.dumps(  
+    results['Labels'],
+    indent=2
+)
+
+# Print a message for each item
+for label in results["Labels"]:  
+    print "I am {}% confident of of the image having a {} in it".format(
+        int(label['Confidence']),
+        label['Name'],
+    )
