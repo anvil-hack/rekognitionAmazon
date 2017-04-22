@@ -5,8 +5,12 @@ import json
 import os, sys
 import image
 from PIL import Image
+import numpy as np
 
-
+def replace_element(lst, new_element, indices):
+	for i in indices:
+		lst[i] = new_element
+	return lst
 
 def imageRekogniser(imageurl):
 
@@ -27,23 +31,54 @@ def imageRekogniser(imageurl):
 	newData = json.loads(jsonData)
 	emotions = newData["Emotions"]
 
+	HighageRange = newData["AgeRange"]["High"]
+	LowageRange = newData["AgeRange"]["Low"]
+	averageAge = (HighageRange/LowageRange)/2 #another variable to send to remi
 
-	emotionArray = []
+
+	everyemotionArray = []
+	ageRangeArray =[]
+	objectArray = []
 
 	for i in emotions:
-		# eachemotion = json.dumps(i, indent=2)
-		mood = i.get("Type")
-		emotionArray.append(mood)
+		everyemotionArray.append(i)
 
-	currentEmotion = emotionArray[0]
-	lowercaseString = currentEmotion.lower()
+	# for i in ageRange:
+	# 	print(i)
 
-	print newData
+	singleEmotion = everyemotionArray[0]
+
+	conf = singleEmotion["Confidence"]
+
+	n = conf*0.01
+	print(singleEmotion["Type"])
+
+	if singleEmotion["Type"] == "SAD" or singleEmotion["Type"] == "CONFUSED" or singleEmotion["Type"] == "ANGRY" or singleEmotion["Type"] == "DISGUSTED":
+		# print singleEmotion["Type"]
+		print((1/n)-1)
+	elif singleEmotion["Type"] == "HAPPY" or  singleEmotion["Type"] == "SURPRISED" or singleEmotion["Type"] == "CALM":
+		# print singleEmotion["Type"]
+		print n
+	else:
+		print 0.5
 
 
 
+
+
+
+
+	# lowercaseString = currentEmotion.lower()
+
+	# for i in ageRange:
+	# 	# therange = json.dumps(i, indent=2)
+	# 	# high = i.get("High")
+	# 	print i
+
+	# print ageRange
 
 if __name__ == '__main__':
+
 	methodname = sys.argv[1]
 	imageRekogniser(methodname)
 
