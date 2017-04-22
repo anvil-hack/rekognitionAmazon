@@ -37,12 +37,9 @@ def imageRekogniser(imageurl):
 
 
 	everyemotionArray = []
-	
+
 	for i in emotions:
 		everyemotionArray.append(i)
-
-	# for i in ageRange:
-	# 	print(i)
 
 	singleEmotion = everyemotionArray[0]
 
@@ -59,6 +56,8 @@ def imageRekogniser(imageurl):
 		print n
 	else:
 		print 0.5
+
+
 
 
 if __name__ == '__main__':
