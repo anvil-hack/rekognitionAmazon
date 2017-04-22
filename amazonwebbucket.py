@@ -37,9 +37,7 @@ def imageRekogniser(imageurl):
 
 
 	everyemotionArray = []
-	ageRangeArray =[]
-	objectArray = []
-
+	
 	for i in emotions:
 		everyemotionArray.append(i)
 
