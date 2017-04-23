@@ -1,17 +1,10 @@
-!/usr/bin/env python
+#!/usr/bin/env python
 
 import boto3  
 import json
 import os, sys
 import image
 import re
-from PIL import Image
-# from pattern.en import singularize
-
-# def isplural(pluralForm):
-#      singularForm = singularize(pluralForm)
-#      plural = True if pluralForm is not singularForm else False
-#      return plural, singularForm
 
 def replace_element(lst, new_element, indices):
 	for i in indices:
@@ -21,8 +14,8 @@ def replace_element(lst, new_element, indices):
 def imageRekogniser(imageurl):
 
 	f = open("{}".format(imageurl))
-	rek = boto3.client('rekognition') # Setup the Rekognition Client  
-	readfile = f.read()# Read the image
+	rek = boto3.client('rekognition') 
+	readfile = f.read()
 	results2 = rek.detect_faces(  
 	    Image={
 	        'Bytes': readfile
@@ -65,7 +58,7 @@ def imageRekogniser(imageurl):
 
 		HighageRange = newData["AgeRange"]["High"]
 		LowageRange = newData["AgeRange"]["Low"]
-		averageAge = (HighageRange+LowageRange)/2 #another variable to send to remi
+		averageAge = (HighageRange+LowageRange)/2
 		everyemotionArray = []
 		genderArray = []
 		genderArray.append(gender)
@@ -82,6 +75,7 @@ def imageRekogniser(imageurl):
 		n = conf*0.01
 		emotion = ""
 
+
 		if singleEmotion["Type"] == "SAD" or singleEmotion["Type"] == "CONFUSED" or singleEmotion["Type"] == "ANGRY" or singleEmotion["Type"] == "DISGUSTED":
 			emotion = singleEmotion["Type"]
 			print((1/n)-1)
@@ -95,9 +89,11 @@ def imageRekogniser(imageurl):
 		    Image={
 		        'Bytes': readfile
 		    },
-		    MaxLabels=15,
+		    MaxLabels=10,
 	    	MinConfidence=60
 		)
+
+		lowercaseemotion = emotion.lower()
 
 		objectsDictionaryArray = []
 		jsonData2 = json.dumps(results3, indent=2)
@@ -108,11 +104,13 @@ def imageRekogniser(imageurl):
 			nameOfObject = i.get("Name")
 			objectsDictionaryArray.append(nameOfObject)
 
-		traits = ', '.join(objectsDictionaryArray[2:len(objectsDictionaryArray)-3])
+		print(objectsDictionaryArray)
+		traits = ', '.join(objectsDictionaryArray[2:3])
+		print(traits)
 		moretraits = ','.join(objectsDictionaryArray[3:len(objectsDictionaryArray)-2])
 		lastElement = '{}'.format(objectsDictionaryArray[len(objectsDictionaryArray)-1])
 
-		print("Your environment contains a {} with {} and a {} with an average age of {} with {} gender. ".format(traits, moretraits, lastElement, averageAge, conf2))
+		print("Your environment contains a {} {} with {}, {} and an average age of {} with {} gender. ".format(lowercaseemotion, traits, moretraits, lastElement, averageAge, conf2))
 
 if __name__ == '__main__':
 
