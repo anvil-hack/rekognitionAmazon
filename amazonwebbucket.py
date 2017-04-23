@@ -106,9 +106,7 @@ def imageRekogniser(imageurl):
 			nameOfObject = i.get("Name")
 			objectsDictionaryArray.append(nameOfObject)
 
-		print(objectsDictionaryArray)
 		traits = ', '.join(objectsDictionaryArray[2:3])
-		print(traits)
 		moretraits = ','.join(objectsDictionaryArray[3:len(objectsDictionaryArray)-2])
 		lastElement = '{}'.format(objectsDictionaryArray[len(objectsDictionaryArray)-1])
 
