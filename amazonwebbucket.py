@@ -2,6 +2,7 @@ import boto3
 import json
 import os, sys
 import image
+import re
 from PIL import Image
 # from pattern.en import singularize
 
@@ -20,9 +21,7 @@ def imageRekogniser(imageurl):
 	f = open("{}".format(imageurl))
 	rek = boto3.client('rekognition') # Setup the Rekognition Client  
 	readfile = f.read()# Read the image
-
 	results2 = rek.detect_faces(  
-
 	    Image={
 	        'Bytes': readfile
 	    },
@@ -43,16 +42,20 @@ def imageRekogniser(imageurl):
 	    	MinConfidence=60
 		)
 
-		objectArray = []
+		objectsDictionaryArray = []
 		jsonData2 = json.dumps(results3, indent=2)
 		newData2 = json.loads(jsonData2)
 		objects = newData2["Labels"]
 
 		for i in objects:
-			objectArray.append(i)
+			nameOfObject = i.get("Name")
+			objectsDictionaryArray.append(nameOfObject)
+		jointString = ', '.join(objectsDictionaryArray[:len(objectsDictionaryArray)-1])
+		lastElement = '{}'.format(objectsDictionaryArray[len(objectsDictionaryArray)-1])
 
-		print(objectArray)
+		print("Your environment contains a {} and a {}".format(jointString, lastElement))
 
+			
 	else:
 		jsonDataa = json.dumps(results2['FaceDetails'][0], indent=2)
 		print(jsonDataa)
