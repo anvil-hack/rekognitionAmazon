@@ -1,11 +1,10 @@
-!/usr/bin/env python
+#!/usr/bin/env python
 
 import boto3  
 import json
 import os, sys
 import image
 import re
-from PIL import Image
 # from pattern.en import singularize
 
 # def isplural(pluralForm):
@@ -21,7 +20,7 @@ def replace_element(lst, new_element, indices):
 def imageRekogniser(imageurl):
 
 	f = open("{}".format(imageurl))
-	rek = boto3.client('rekognition') # Setup the Rekognition Client  
+	rek = boto3.client('rekognition', region_name='us-west-2', aws_access_key_id="AKIAJGF5VFUKW2HXEEUA", aws_secret_access_key="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")
 	readfile = f.read()# Read the image
 	results2 = rek.detect_faces(  
 	    Image={
