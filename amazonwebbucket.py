@@ -5,16 +5,37 @@ import json
 import os, sys
 import image
 import re
+import thread
+
+
+def getserial():
+    cpuserial = "0000000000000000"
+    try:
+        f = open('/proc/cpuinfo', 'r')
+        for line in f:
+            if line[0:6] == 'Serial':
+                cpuserial = line[10:26]
+        f.close()
+    except:
+        cpuserial = "ERROR000000000"
+
+    return cpuserial
 
 def replace_element(lst, new_element, indices):
 	for i in indices:
 		lst[i] = new_element
 	return lst
 
+def sendRequest(url, paramas):
+    r = requests.post(url, headers={'identifier': getserial()},
+                      data=paramas)
+    print(r)
+
+
 def imageRekogniser(imageurl):
 
 	f = open("{}".format(imageurl))
-	# rek = boto3.client('rekognition') 
+	# rek = boto3.client('rekognition')
 	# readfile = f.read()
 	rek = boto3.client('rekognition', region_name='us-west-2', aws_access_key_id="AKIAJGF5VFUKW2HXEEUA", aws_secret_access_key="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")
 	readfile = f.read()
@@ -110,7 +131,14 @@ def imageRekogniser(imageurl):
 		moretraits = ','.join(objectsDictionaryArray[3:len(objectsDictionaryArray)-2])
 		lastElement = '{}'.format(objectsDictionaryArray[len(objectsDictionaryArray)-1])
 
-		print("Your environment contains a {} {} with {}, {} and an average age of {} with {} gender. ".format(lowercaseemotion, traits, moretraits, lastElement, averageAge, conf2))
+		bigstring = ("Your environment contains a {} {} with {}, {} and an average age of {} with {} gender. ".format(lowercaseemotion, traits, moretraits, lastElement, averageAge, conf2))
+
+		try:
+            thread.start_new_thread(sendRequest, (
+                'http://172.16.0.49:4242/nodeData', {'valence': n, 'finalString': bigstring}))
+        except:
+            print ("Error: unable to start thread")
+
 
 if __name__ == '__main__':
 
