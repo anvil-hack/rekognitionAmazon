@@ -6,6 +6,8 @@ import os, sys
 import image
 import re
 import thread
+import requests
+import base64
 
 
 def replace_element(lst, new_element, indices):
@@ -119,11 +121,7 @@ def imageRekogniser(imageurl):
 
 		bigstring = ("Your environment contains a {} {} with {}, {} and an average age of {} with {} gender. ".format(lowercaseemotion, traits, moretraits, lastElement, averageAge, conf2))
 
-		try:
-            thread.start_new_thread(sendRequest, (
-                'http://172.16.0.49:4242/nodeData', {'valence': n, 'finalString': bigstring}))
-        except:
-            print ("Error: unable to start thread")
+        sendRequest('http://178.62.14.170:4242/capture', {'valence': n, 'finalString': bigstring})
 
 
 if __name__ == '__main__':
