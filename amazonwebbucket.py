@@ -14,8 +14,8 @@ def replace_element(lst, new_element, indices):
 def imageRekogniser(imageurl):
 
 	f = open("{}".format(imageurl))
-	rek = boto3.client('rekognition') 
-	readfile = f.read()
+	# rek = boto3.client('rekognition') 
+	# readfile = f.read()
 	rek = boto3.client('rekognition', region_name='us-west-2', aws_access_key_id="AKIAJGF5VFUKW2HXEEUA", aws_secret_access_key="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")
 	readfile = f.read()
 	results2 = rek.detect_faces(  
