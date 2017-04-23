@@ -54,18 +54,19 @@ def imageRekogniser(imageurl):
 		lastElement = '{}'.format(objectsDictionaryArray[len(objectsDictionaryArray)-1])
 
 		print("Your environment contains a {} and a {}".format(jointString, lastElement))
-
 			
 	else:
 		jsonDataa = json.dumps(results2['FaceDetails'][0], indent=2)
-		print(jsonDataa)
-		newData = json.loads(jsonData)
+		newData = json.loads(jsonDataa)
 		emotions = newData["Emotions"]
+		gender = newData["Gender"]
 
 		HighageRange = newData["AgeRange"]["High"]
 		LowageRange = newData["AgeRange"]["Low"]
 		averageAge = (HighageRange+LowageRange)/2 #another variable to send to remi
 		everyemotionArray = []
+		genderArray = []
+		genderArray.append(gender)
 
 		for i in emotions:
 			everyemotionArray.append(i)
@@ -73,19 +74,20 @@ def imageRekogniser(imageurl):
 		singleEmotion = everyemotionArray[0]
 		conf = singleEmotion["Confidence"]
 
+		valueofgender = genderArray[0]
+		conf2 = valueofgender["Value"]
+
 		n = conf*0.01
-		print(singleEmotion["Type"])
+		emotion = ""
 
 		if singleEmotion["Type"] == "SAD" or singleEmotion["Type"] == "CONFUSED" or singleEmotion["Type"] == "ANGRY" or singleEmotion["Type"] == "DISGUSTED":
-			# print singleEmotion["Type"]
+			emotion = singleEmotion["Type"]
 			print((1/n)-1)
 		elif singleEmotion["Type"] == "HAPPY" or  singleEmotion["Type"] == "SURPRISED" or singleEmotion["Type"] == "CALM":
-			# print singleEmotion["Type"]
+			emotion = singleEmotion["Type"]
 			print(n)
 		else:
 			print(0.5)
-
-		print("Seems as though this persons age is {}".format(averageAge))
 
 		results3 = rek.detect_labels(  
 		    Image={
@@ -95,13 +97,20 @@ def imageRekogniser(imageurl):
 	    	MinConfidence=60
 		)
 
+		objectsDictionaryArray = []
 		jsonData2 = json.dumps(results3, indent=2)
 		newData2 = json.loads(jsonData2)
 		objects = newData2["Labels"]
-		# print(objects)
 
 		for i in objects:
-			print i
+			nameOfObject = i.get("Name")
+			objectsDictionaryArray.append(nameOfObject)
+
+		traits = ', '.join(objectsDictionaryArray[2:len(objectsDictionaryArray)-3])
+		moretraits = ','.join(objectsDictionaryArray[3:len(objectsDictionaryArray)-2])
+		lastElement = '{}'.format(objectsDictionaryArray[len(objectsDictionaryArray)-1])
+
+		print("Your environment contains a {} with {} and a {} with an average age of {} with {} gender. ".format(traits, moretraits, lastElement, averageAge, conf2))
 
 if __name__ == '__main__':
 
