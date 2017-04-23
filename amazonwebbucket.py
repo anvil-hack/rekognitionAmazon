@@ -8,27 +8,13 @@ import re
 import thread
 
 
-def getserial():
-    cpuserial = "0000000000000000"
-    try:
-        f = open('/proc/cpuinfo', 'r')
-        for line in f:
-            if line[0:6] == 'Serial':
-                cpuserial = line[10:26]
-        f.close()
-    except:
-        cpuserial = "ERROR000000000"
-
-    return cpuserial
-
 def replace_element(lst, new_element, indices):
 	for i in indices:
 		lst[i] = new_element
 	return lst
 
 def sendRequest(url, paramas):
-    r = requests.post(url, headers={'identifier': getserial()},
-                      data=paramas)
+    r = requests.post(url, data=paramas)
     print(r)
 
 
